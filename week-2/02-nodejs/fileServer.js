@@ -32,18 +32,27 @@ app.get("/files", (req,res) => {
 app.get("/files/:filename", (req, res) => {
   const { filename } = req.params;
   const directoryPath = './files/';
+  const filePath = path.join(directoryPath, filename);
 
-  fs.readFile(directoryPath + filename, 'utf-8', (err, files) => {
+  fs.readFile(filePath, 'utf-8', (err, fileContent) => {
     if (err) {
-      res.status(404).json({ error: 'Failed' });
+      if (err.code === 'ENOENT') {
+        res.status(404).send('File not found');
+      } else {
+        res.status(500).send('Internal Server Error');
+      }
       return;
     }
-    res.status(200).send(files)
+    res.status(200).send(fileContent)
   })
 })
 
+app.use('*', (req, res) => {
+  res.status(404).send('Not Found');
+});
+
 app.listen(3000, () => {
-  console.log("Listning port 3000")
+  console.log('Listening on port 3000');
 })
 
-module.exports = app;
+module.exports = app;    
