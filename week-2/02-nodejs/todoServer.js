@@ -40,10 +40,70 @@
   Testing the server - run `npm run test-todoServer` command in terminal
  */
   const express = require('express');
-  const bodyParser = require('body-parser');
+  const fs = require('fs');  
+  const server = express();
+  server.use(express.json())
   
-  const app = express();
+  // Middleware for reading the todos.json file
+  function readTodosFile(req, res, next) {
+    fs.readFile('todos.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error reading todos.json');
+      }
+      let todosArray;
+      try {
+        todosArray = JSON.parse(data);
+        if (!Array.isArray(todosArray)) {
+          throw new Error('Data in the file is not an array');
+        }
+      } catch (parseError) {
+        console.error('Error parsing JSON:', parseError);
+        return res.status(500).send('Error parsing todos.json');
+      }
+      req.todosArray = todosArray;
+      next();
+    });
+  }
   
-  app.use(bodyParser.json());
+  // Middleware for finding a todo by ID
+  function findTodoByID(req, res, next) {
+    const id = parseInt(req.params.id);
+    const { todosArray } = req;
+    const todo = todosArray.find((todo) => todo.id === id);
+    if (todo) {
+      req.todo = todo;
+      next();
+    } else {
+      res.status(404).send('Todo not found');
+    }
+  }
   
-  module.exports = app;
+  // Routes using the middleware
+  server.get('/todos', readTodosFile, (req, res) => {
+    res.status(200).json(req.todosArray);
+  });
+  
+  server.get('/todos/:id', readTodosFile, findTodoByID, (req, res) => {
+    res.status(200).json(req.todo);
+  });
+  
+  server.post('/todos', readTodosFile, (req, res) => {
+    const { title, description } = req.body;
+    const id = req.todosArray.length + 1;
+    const newTodo = { id, title, description };
+    req.todosArray.push(newTodo);
+    fs.writeFile('todos.json', JSON.stringify(req.todosArray), (err) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error writing todos.json');
+      } else {
+        res.status(201).json({ id }); 
+      }
+    });
+  });
+  
+  server.listen(3000, () => {
+    console.log('Listening on port 3000');
+  })
+  
