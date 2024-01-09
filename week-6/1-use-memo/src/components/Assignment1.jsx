@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useState } from "react";
 
 // In this assignment, your task is to create a component that performs an expensive calculation (finding the factorial) based on a user input. 
@@ -5,9 +6,18 @@ import { useState } from "react";
 
 export function Assignment1() {
     const [input, setInput] = useState(0);
-    // Your solution starts here
-    const expensiveValue = 0; 
-    // Your solution ends here
+
+    function factorial(n){
+        let fact=1;
+        for(let i=1;i<=n;i++){
+            fact*=i;
+        }
+        return fact;
+    }
+
+    const expensiveValue = useMemo(() => {
+      return factorial(input)
+    },[input]); 
 
     return (
         <div>

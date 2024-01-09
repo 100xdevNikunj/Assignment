@@ -5,15 +5,35 @@ import React, { useState, useMemo } from 'react';
 const Assignment3 = () => {
     const [items, setItems] = useState([
         { name: 'Chocolates', value: 10 },
-        { name: 'Chips', value: 20 },
+        { name: 'Chips', value: 20 }, { name: 'Chips', value: 20 }, { name: 'Chips', value: 20 },
         { name: 'Onion', value: 30 },
+        { name: 'Tomato', value: 30 },
+        { name: 'Tomato', value: 30 },
         { name: 'Tomato', value: 30 },
         // Add more items as needed
     ]);
 
     // Your code starts here
-    const totalValue = 0;
+
+    function sum(items){
+        let temp = 0;
+        items.forEach((a) => 
+            temp+=a.value
+        )
+        return temp;
+    }
+
+    const totalValue = useMemo(() => {
+        return sum(items)
+    },[items]);
+
     // Your code ends here
+    
+    // const totalValue = useMemo(() => {
+    //     return items.reduce((acc, item) => acc + item.value, 0);
+    // }, [items]);
+
+    
     return (
         <div>
             <ul>
