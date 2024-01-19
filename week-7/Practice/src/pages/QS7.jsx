@@ -37,7 +37,7 @@ export default function QS7() {
         <br></br>
         <h1>
           {" "}
-          {randomWish2} => {name}
+          {randomWish2} = {name}
         </h1>
       </div>,
     );
