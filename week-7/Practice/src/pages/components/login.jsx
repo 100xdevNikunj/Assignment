@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-
+import OtpInput  from './otpInput'
 function Login() {
   const [mobilenumber, setMobilenumber] = useState('');
   const [otp, setOtp] = useState(false);
+  console.log("🚀 ~ Login ~ otp:", otp)
 
   function validateMobile(mobilenumber) {   
     var regmm='^([0|+[0-9]{1,5})?([7-9][0-9]{9})$';
@@ -20,8 +21,11 @@ function Login() {
     }else {
         setOtp(true);
     }
-
   };
+
+  function onOtpSubmit(){
+    console.log("Login successfull")
+  }
 
   return (
     !otp ? (
@@ -37,6 +41,7 @@ function Login() {
     ) : (
       <div>
         <h2>OTP sent to {mobilenumber}</h2>
+        {otp ? <OtpInput length={4} onSubmit={onOtpSubmit}/> : null}
       </div>
     )
   );
