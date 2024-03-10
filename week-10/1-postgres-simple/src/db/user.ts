@@ -10,7 +10,13 @@ import { client } from "..";
  * }
  */
 export async function createUser(username: string, password: string, name: string) {
-    
+    return await client.user.create({
+        data: {
+            username,
+            password,
+            name
+        }
+      })
 }
 
 /*
@@ -22,5 +28,5 @@ export async function createUser(username: string, password: string, name: strin
  * }
  */
 export async function getUser(userId: number) {
-    
+    return await client.user.get({ userId })
 }
